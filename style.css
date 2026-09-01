@@ -1,4 +1,4 @@
-body{
+body {
     font-family: 'Times New Roman', Times, serif;
     text-align: center;
 }
@@ -8,7 +8,7 @@ h1 {
 }
 
 button {
-    padding: 50px,100px1;
+    padding: 50px 100px;
     background-color: burlywood;
     color: floralwhite;
     border: none;
