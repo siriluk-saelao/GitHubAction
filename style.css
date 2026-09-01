@@ -13,8 +13,8 @@ h1 {
 button {
     font-size: xx-large;
     padding: 40px 80px;
-    background-color: rgb(4, 74, 165);
-    color: #ffffff;
+    background-color: rgb(4 74 165); 
+    color: #fff;
     border: none;
     cursor: pointer;
 }
