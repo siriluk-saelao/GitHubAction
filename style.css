@@ -2,6 +2,7 @@ body {
     font-family: 'Times New Roman', Times, serif;
     font-size: larger;
     text-align: center;
+    background-color: #ffdd9a;
 }
 
 h1 {
@@ -12,8 +13,8 @@ h1 {
 button {
     font-size: xx-large;
     padding: 40px 80px;
-    background-color: burlywood;
-    color: floralwhite;
+    background-color: rgb(4, 74, 165);
+    color: #ffffff;
     border: none;
     cursor: pointer;
 }
