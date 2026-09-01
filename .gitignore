@@ -1,0 +1,11 @@
+# AL / Business Central Standard Ignores
+.alpackages/
+*.app
+.rad/
+
+# Extension Caches & Tooling Ignores 
+.altestrunner/
+.vscode/.altemplates/
+.vscode/rad.json
+.vscode/launch.json
+cache_*
