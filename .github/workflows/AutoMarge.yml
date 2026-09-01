@@ -17,10 +17,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Merge Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH_NAME="${{ github.event.workflow_run.head_branch }}"
-          echo "Merging PR for branch: $BRANCH_NAME"
-          gh pr merge "$BRANCH_NAME" --merge
+          echo "Searching open PR for branch: $BRANCH_NAME"
+
+          PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --base main --state open --json number -q '.[0].number')
+
+          if [ -n "$PR_NUMBER" ]; then
+            echo "Found PR #$PR_NUMBER, merging now..."
+            gh pr merge "$PR_NUMBER" --merge
+          else
+            echo "No open PR found for branch: $BRANCH_NAME"
+            exit 1
+          fi
