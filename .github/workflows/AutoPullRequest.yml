@@ -20,23 +20,37 @@ jobs:
 
       # 1. ติดตั้ง Tool สำหรับตรวจ HTML, JS, CSS
       - name: Install Linters (HTML, JS, CSS)
-        run: npm install -g htmlhint jshint csslint
+        run: npm install -g htmlhint jshint stylelint stylelint-config-standard
 
-      # 2. รันตรวจ HTML
+      # 2. รันตรวจ HTML (ถ้าไม่เจอไฟล์ .html จะ ข้าม ทันที)
       - name: Run HTML syntax check
-        run: htmlhint "**/*.html"
+        run: |
+          HTML_FILES=$(find . -type f -name "*.html" -not -path "*/node_modules/*")
+          if [ -n "$HTML_FILES" ]; then
+            echo "Found HTML files, running HTMLHint..."
+            htmlhint $HTML_FILES
+          else
+            echo "No HTML files found. Skipping..."
+          fi
 
-      # 3. รันตรวจ JavaScript
+      # 3. รันตรวจ JavaScript (ถ้าไม่เจอไฟล์ .js จะ ข้าม ทันที)
       - name: Run JS syntax check
-        run: jshint "**/*.js"
+        run: |
+          JS_FILES=$(find . -type f -name "*.js" -not -path "*/node_modules/*")
+          if [ -n "$JS_FILES" ]; then
+            echo "Found JS files, running JSHint..."
+            jshint --esversion=6 $JS_FILES
+          else
+            echo "No JS files found. Skipping..."
+          fi
 
-      # 4. รันตรวจ CSS
+      # 4. รันตรวจ CSS (Stylelint มี --allow-empty-input ช่วยข้ามให้อยู่แล้ว)
       - name: Run CSS syntax check
-        run: csslint "**/*.css"
+        run: npx stylelint "**/*.css" --allow-empty-input --config '{"extends": "stylelint-config-standard"}'
 
   # Job 2: สร้าง PR ไปยัง main (จะรันเมื่อ check-syntax ผ่านทั้งหมดเท่านั้น)
   auto-create-pr:
-    needs: check-syntax # รอให้ Job check-syntax ข้างบนผ่านทั้งหมดก่อน
+    needs: check-syntax
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -52,10 +66,8 @@ jobs:
           EXISTING_PR=$(gh pr list --head "${{ github.ref_name }}" --base main --state open --json number -q '.[0].number')
 
           if [ -z "$EXISTING_PR" ]; then
-            # 1. ดึง Commit Message ล่าสุด (ตัดเอาเฉพาะบรรทัดแรกเพื่อไม่ให้คำสั่งพัง)
             COMMIT_MSG=$(git log -1 --format=%s)
 
-            # 2. เช็คว่ามี Commit Message หรือไม่ ถ้าไม่มีให้ใช้ค่า Default
             if [ -n "$COMMIT_MSG" ]; then
               PR_TITLE="$COMMIT_MSG"
             else
@@ -64,12 +76,11 @@ jobs:
 
             echo "Creating PR with title: '$PR_TITLE'"
 
-            # 3. สร้าง PR โดยใช้ชื่อที่กำหนดไว้
             gh pr create \
               --base main \
               --head "${{ github.ref_name }}" \
               --title "$PR_TITLE" \
-              --body "Automated PR created after HTML, JS, and CSS Syntax Check passed successfully."
+              --body "Automated PR created after syntax check passed successfully."
           else
             echo "PR already exists (#$EXISTING_PR) for branch '${{ github.ref_name }}'. Skipping creation."
           fi
