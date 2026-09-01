@@ -2,16 +2,19 @@ body{
     font-family: 'Courier New', Courier, monospace;
     font-size: larger;
     text-align: center;
+    background-color: #ffdd9a;
 }
 
 h1 {
     color: #000;
+    font-size: large;
 }
 
 button {
-    padding: 10px,20px;
-    background-color: burlywood;
-    color: floralwhite;
+    font-size: xx-large;
+    padding: 40px 80px;
+    background-color: rgb(4 74 165); 
+    color: #fff;
     border: none;
     cursor: pointer;
 }
