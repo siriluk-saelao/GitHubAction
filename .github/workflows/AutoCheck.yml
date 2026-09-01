@@ -41,7 +41,7 @@ jobs:
           if [ -n "$JS_FILES" ]; then
             echo "Found changed JS files:"
             echo "$JS_FILES"
-            jshint --esversion=6 $JS_FILES
+            jshint --config '{"esversion": 6}' $JS_FILES
           else
             echo "No changed JS files to check."
           fi
