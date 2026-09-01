@@ -41,7 +41,9 @@ jobs:
           if [ -n "$JS_FILES" ]; then
             echo "Found changed JS files:"
             echo "$JS_FILES"
-            jshint --esversion=6 $JS_FILES
+            # สร้างไฟล์ตั้งค่าให้ JSHint รองรับ ES6 (const, let, arrow function)
+            echo '{"esversion": 6}' > .jshintrc
+            jshint $JS_FILES
           else
             echo "No changed JS files to check."
           fi
