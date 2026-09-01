@@ -1,0 +1,26 @@
+name: Auto Merge Pull Request
+
+on:
+  workflow_run:
+    workflows: ["Auto Create Pull Request"]
+    types:
+      - completed
+
+jobs:
+  auto-merge:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Merge Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="${{ github.event.workflow_run.head_branch }}"
+          echo "Merging PR for branch: $BRANCH_NAME"
+          gh pr merge "$BRANCH_NAME" --merge
