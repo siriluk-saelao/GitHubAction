@@ -1,0 +1,16 @@
+body{
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+}
+
+h1 {
+    color: #000;
+}
+
+button {
+    padding: 10px,20px;
+    background-color: burlywood;
+    color: floralwhite;
+    border: none;
+    cursor: pointer;
+}

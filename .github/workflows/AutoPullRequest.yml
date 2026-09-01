@@ -1,0 +1,75 @@
+name: Auto Create Pull Request
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  # Job 1: ตรวจสอบ Syntax ของ HTML, JS และ CSS
+  check-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 1. ติดตั้ง Tool สำหรับตรวจ HTML, JS, CSS
+      - name: Install Linters (HTML, JS, CSS)
+        run: npm install -g htmlhint jshint csslint
+
+      # 2. รันตรวจ HTML
+      - name: Run HTML syntax check
+        run: htmlhint "**/*.html"
+
+      # 3. รันตรวจ JavaScript
+      - name: Run JS syntax check
+        run: jshint "**/*.js"
+
+      # 4. รันตรวจ CSS
+      - name: Run CSS syntax check
+        run: csslint "**/*.css"
+
+  # Job 2: สร้าง PR ไปยัง main (จะรันเมื่อ check-syntax ผ่านทั้งหมดเท่านั้น)
+  auto-create-pr:
+    needs: check-syntax # รอให้ Job check-syntax ข้างบนผ่านทั้งหมดก่อน
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create PR to main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING_PR=$(gh pr list --head "${{ github.ref_name }}" --base main --state open --json number -q '.[0].number')
+
+          if [ -z "$EXISTING_PR" ]; then
+            # 1. ดึง Commit Message ล่าสุด (ตัดเอาเฉพาะบรรทัดแรกเพื่อไม่ให้คำสั่งพัง)
+            COMMIT_MSG=$(git log -1 --format=%s)
+
+            # 2. เช็คว่ามี Commit Message หรือไม่ ถ้าไม่มีให้ใช้ค่า Default
+            if [ -n "$COMMIT_MSG" ]; then
+              PR_TITLE="$COMMIT_MSG"
+            else
+              PR_TITLE="คำขอ merge จาก branch ${{ github.ref_name }} เข้า main"
+            fi
+
+            echo "Creating PR with title: '$PR_TITLE'"
+
+            # 3. สร้าง PR โดยใช้ชื่อที่กำหนดไว้
+            gh pr create \
+              --base main \
+              --head "${{ github.ref_name }}" \
+              --title "$PR_TITLE" \
+              --body "Automated PR created after HTML, JS, and CSS Syntax Check passed successfully."
+          else
+            echo "PR already exists (#$EXISTING_PR) for branch '${{ github.ref_name }}'. Skipping creation."
+          fi
