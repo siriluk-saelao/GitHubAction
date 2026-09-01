@@ -1,14 +1,17 @@
-body{
+body {
     font-family: 'Times New Roman', Times, serif;
+    font-size: larger;
     text-align: center;
 }
 
 h1 {
     color: #000;
+    font-size: large;
 }
 
 button {
-    padding: 10px,20px;
+    font-size: xx-large;
+    padding: 40px 80px;
     background-color: burlywood;
     color: floralwhite;
     border: none;
