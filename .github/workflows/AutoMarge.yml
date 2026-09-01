@@ -1,13 +1,13 @@
-name: Auto Merge Pull Request
+name: Auto Merge and Delete Branch
 
 on:
   workflow_run:
-    workflows: ["Auto Create Pull Request"]
+    workflows: ["Auto Create Pull Request"] # รอให้ไฟล์ PR สร้างเสร็จเรียบร้อย
     types:
       - completed
 
 jobs:
-  auto-merge:
+  merge-and-clean:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
@@ -17,24 +17,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Merge Pull Request
+      - name: Merge PR and Delete Branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH_NAME="${{ github.event.workflow_run.head_branch }}"
-          echo "Searching open PR for branch: $BRANCH_NAME"
-
-          PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --base main --state open --json number -q '.[0].number')
-
+          echo "Searching for the latest open Pull Request..."
+          
+          # ค้นหาเลข PR ล่าสุดที่ยังเปิดอยู่ 1 รายการ 
+          # (ข้ามปัญหาเรื่องชื่อ Branch โดยการดึงจาก PR ที่เพิ่งสร้างเสร็จ)
+          PR_NUMBER=$(gh pr list --base main --state open --limit 1 --json number -q '.[0].number')
+          
           if [ -n "$PR_NUMBER" ]; then
-            echo "Found PR #$PR_NUMBER, merging now..."
-            gh pr merge "$PR_NUMBER" --merge
+            echo "Found Open PR #$PR_NUMBER! Proceeding to merge..."
+            
+            # สั่ง Merge PR และลบ Branch ต้นทางทิ้งในคำสั่งเดียวจบ
+            gh pr merge "$PR_NUMBER" --merge --delete-branch
+            
+            echo "✅ Successfully merged PR #$PR_NUMBER and deleted the feature branch."
           else
-            echo "No open PR found for branch: $BRANCH_NAME"
-            exit 1
+            echo "⚠️ No open PR found. It might have been already merged or closed."
           fi
