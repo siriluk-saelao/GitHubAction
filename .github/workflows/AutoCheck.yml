@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install Linters
         run: npm install -g htmlhint jshint stylelint stylelint-config-standard
@@ -55,7 +55,8 @@ jobs:
           if [ -n "$CSS_FILES" ]; then
             echo "Found changed CSS files:"
             echo "$CSS_FILES"
-            npx stylelint $CSS_FILES --config '{"extends": "stylelint-config-standard"}'
+            echo '{"extends": "stylelint-config-standard"}' > .stylelintrc
+            npx stylelint $CSS_FILES
           else
             echo "No changed CSS files to check."
           fi
