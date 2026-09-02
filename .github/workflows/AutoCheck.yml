@@ -61,3 +61,13 @@ jobs:
           else
             echo "No changed CSS files to check."
           fi
+
+      - name: Check Regex in JS
+        run: |
+          # ค้นหาว่าในไฟล์ script.js มีการใช้ Regex /^[a-zA-Zก-ฮะ-์]+$/ หรือไม่
+          if grep -q "\[a-zA-Z" script.js; then
+            echo "✅ ผ่าน: พบโค้ดดักจับตัวอักษรในไฟล์ JS"
+          else
+            echo "❌ ไม่ผ่าน: คุณลืมเขียนโค้ดดักจับตัวเลขและอักขระพิเศษใน JS!"
+            exit 1 # สั่งให้ Workflow แจ้ง Error สีแดง
+          fi
