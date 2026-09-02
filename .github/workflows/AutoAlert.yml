@@ -2,7 +2,7 @@ name: Auto Alert
 
 on:
   schedule:
-    - cron: '1 * * * *'
+    - cron: '*/5 * * * *'
   #workflow_dispatch:
 
 jobs:
@@ -13,21 +13,5 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Print Dynamic Greeting
-        env:
-          USER_NAME: ${{ github.triggering_actor }}
         run: |
-
-          # 1. ดึงชั่วโมงปัจจุบันในเขตเวลาไทย (Asia/Bangkok)
-          HOUR=$(TZ='Asia/Bangkok' date +%H)
-
-          # 2. เงื่อนไขแบ่งช่วงเวลาตามเวลาไทย
-          if [ "$HOUR" -ge 5 ] && [ "$HOUR" -lt 12 ]; then
-            TIME_GREETING="Good morning"
-          elif [ "$HOUR" -ge 12 ] && [ "$HOUR" -lt 18 ]; then
-            TIME_GREETING="Good afternoon"
-          else
-            TIME_GREETING="Good evening"
-          fi
-
-          # 3. พิมพ์ข้อความตามรูปแบบที่กำหนด
-          echo "Hello $USER_NAME $TIME_GREETING !!"
+          echo "Hello "
