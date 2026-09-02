@@ -2,17 +2,21 @@ name: Auto Alert
 
 on:
   schedule:
-    - cron: '15 * * * *'
-  workflow_dispatch:
+    - cron: '10 * * * *'
+  #workflow_dispatch:
 
 jobs:
   notify-hello:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Print Dynamic Greeting
         env:
           USER_NAME: ${{ github.triggering_actor }}
         run: |
+
           # 1. ดึงชั่วโมงปัจจุบันในเขตเวลาไทย (Asia/Bangkok)
           HOUR=$(TZ='Asia/Bangkok' date +%H)
 
