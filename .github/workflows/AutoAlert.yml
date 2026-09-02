@@ -1,0 +1,16 @@
+name: Auto Alert
+
+on:
+  schedule:
+    # รันทุกๆ ต้นชั่วโมง (เช่น 01:00, 02:00, 03:00)
+    - cron: '0 * * * *'
+  # ใส่เพิ่มเพื่อให้มีปุ่มกด Manual Run ทดสอบได้ทันที
+  workflow_dispatch:
+
+jobs:
+  notify-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Hello
+        run: |
+          echo "Hello! 🔔 Scheduled job triggered successfully."
