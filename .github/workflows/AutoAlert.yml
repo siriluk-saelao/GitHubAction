@@ -2,15 +2,28 @@ name: Auto Alert
 
 on:
   schedule:
-    # รันทุกๆ ต้นชั่วโมง (เช่น 01:00, 02:00, 03:00)
     - cron: '0 * * * *'
-  # ใส่เพิ่มเพื่อให้มีปุ่มกด Manual Run ทดสอบได้ทันที
   workflow_dispatch:
 
 jobs:
   notify-hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Hello
+      - name: Print Dynamic Greeting
+        env:
+          USER_NAME: ${{ github.triggering_actor }}
         run: |
-          echo "Hello! 🔔 Scheduled job triggered successfully."
+          # 1. ดึงชั่วโมงปัจจุบันในเขตเวลาไทย (Asia/Bangkok)
+          HOUR=$(TZ='Asia/Bangkok' date +%H)
+
+          # 2. เงื่อนไขแบ่งช่วงเวลาตามเวลาไทย
+          if [ "$HOUR" -ge 5 ] && [ "$HOUR" -lt 12 ]; then
+            TIME_GREETING="Good morning"
+          elif [ "$HOUR" -ge 12 ] && [ "$HOUR" -lt 18 ]; then
+            TIME_GREETING="Good afternoon"
+          else
+            TIME_GREETING="Good evening"
+          fi
+
+          # 3. พิมพ์ข้อความตามรูปแบบที่กำหนด
+          echo "Hello $USER_NAME $TIME_GREETING !!"
