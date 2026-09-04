@@ -12,6 +12,6 @@ document.getElementById('button1').addEventListener('click', function() {
     } else if (lettersOnly.test(userName)) {
         alert('Pass: ข้อมูลถูกต้อง');
     } else {
-        alert('Fail: ห้ามใช้ตัวเลข!');
+        alert('Fail: ห้ามใช้ตัวเลข-ตัวอักษรพิเศษ!');
     }
 });
