@@ -4,18 +4,14 @@
 //});
 
 document.getElementById('button1').addEventListener('click', function() {
-
     const userName = document.getElementById('nameInput').value;
-    const lettersOnly = /^[a-zA-Zก-ฮะ-์]+$/;
+    const lettersOnly = /^[a-zA-Zก-ฮะ-์\s]+$/; // อนุญาตให้เว้นวรรคได้ด้วย \s
 
     if (userName.trim() === '') {
-        alert('Fail: กรุณากรอกชื่อก่อนกดปุ่ม!');
-        return; 
-    }
-
-    if (lettersOnly.test(userName)) {
+        alert('Fail: กรุณากรอกข้อมูล!');
+    } else if (lettersOnly.test(userName)) {
         alert('Pass: ข้อมูลถูกต้อง');
     } else {
-        alert('Fail: ไม่อนุญาตให้ใช้ตัวเลขหรืออักขระพิเศษ');
+        alert('Fail: ห้ามใช้ตัวเลข!');
     }
 });

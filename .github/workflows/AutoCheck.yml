@@ -71,3 +71,10 @@ jobs:
             echo "❌ ไม่ผ่าน: คุณลืมเขียนโค้ดดักจับตัวเลขและอักขระพิเศษใน JS!"
             exit 1 # สั่งให้ Workflow แจ้ง Error สีแดง
           fi
+
+      - name: Run UI Automation Test
+        run: |
+          echo "Installing Puppeteer..."
+          npm install puppeteer
+          echo "Running UI tests..."
+          node ui-test.js
