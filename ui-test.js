@@ -5,7 +5,9 @@ const path = require('path');
     console.log('🚀 เริ่มต้นการจำลองเป็นผู้ใช้งาน (UI Testing)...');
     
     // 1. เปิดบราวเซอร์จำลอง
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
     
     // 2. สั่งให้เปิดไฟล์ index.html ของเรา
