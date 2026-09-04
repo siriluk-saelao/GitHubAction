@@ -2,7 +2,7 @@ name: Auto Alert
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+#ทำงานแล้ว    - cron: '*/5 * * * *'
   #workflow_dispatch:
 
 jobs:
